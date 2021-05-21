@@ -1,0 +1,43 @@
+===========================================================================
+2020 - 02 - 23
+------------------------
+
+ * Changed ode time stepping control to all fall within params.solver_opts
+
+ * Change params.exchange options to {false, 'linear', 'ratio', 'old};
+
+ * Deprecate params.tol
+
+===========================================================================
+2020 - 02 - 12
+------------------------
+ * Deprecated use of weightedLeastSquares functions and params.wls switch,
+   always use 'new' least squares (W*A)\(W*b).
+
+ * Deprecated use of params.sheet_model. Always use 'nonlinear' sheet model
+
+ * Deprecated use of flux weighting, params.channel_weights
+
+ * Add params.channel_model
+
+ * Add params.channel_model options to generic rhs function
+
+ * Remove time stepping from get_default_params.m (user must specify these)
+
+ * Remove melt factor mf
+
+ * Investigate h_s interpolation switch params.sheet_interp, 'custom' or 'matlab'.
+    * Built-in matlab interpolation >10x faster
+    * BUT, we don't actually need h_s on edges, can make the exchange
+      fraction just depend on how much water is in the channel
+    * Speeds up the model ~2x!!
+    * Removed this from the model
+
+ * Remove LS-node option for sheet gradient method
+
+ * Remove params.advection switch -- always use upwind method
+
+------------------------
+
+ * TODO: Adaptive odeRK solver?
+===========================================================================

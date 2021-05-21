@@ -1,0 +1,42 @@
+function [q_edge, q_moulin] = calc_discharge(dmesh, z, dphic_ds, ii_moulin, melt)
+% calc_discharge calculates the flux along each edge and and discharge into
+% moulins using the basic flow routing algorithm.
+%
+% [q_edge, q_moulin] = calc_discharge(dmesh, z, dphic_ds, ii_moulin, melt)
+
+
+q_edge = zeros(dmesh.tri.n_edges, 1);
+q_moulin = zeros(length(ii_moulin), 1);
+for ii=1:dmesh.tri.n_elements
+    % Find the outlet node of the element
+    [~,el_kk] = min(z(dmesh.tri.connect(ii, :)));
+    kk_current = dmesh.tri.connect(ii,el_kk);
+    
+    % Iteratively find the steepest downhill edge connecting to each node;
+    % repeat for next node
+    while dmesh.tri.bmark(kk_current) <= 0 && ~ismember(kk_current, ii_moulin)
+       % Find the outlet edge
+       neigh_edges = dmesh.tri.connect_edge_inv{kk_current};
+       gradphi_neigh = dphic_ds(neigh_edges)'.*dmesh.tri.flow_dir{kk_current};
+       [~,edge_ind] = max(gradphi_neigh);
+       edge_num = neigh_edges(edge_ind);
+       
+       % Add the melt produced from the element to each edge along the path
+       q_edge(edge_num) = q_edge(edge_num) + dmesh.tri.area(ii)*melt(ii);
+       
+       % Find the node the edge connects to to start the next iteration
+       all_nodes = dmesh.tri.connect_edge(edge_num, :);
+       outlet_ind = all_nodes(all_nodes~=kk_current);
+       
+       % For next iteration
+       kk_current = outlet_ind;
+    end
+   
+   % If the path terminates at am 
+   if ismember(kk_current, ii_moulin)
+       moulin_index = find(ii_moulin==kk_current);
+       q_moulin(moulin_index) = q_moulin(moulin_index) + dmesh.tri.area(ii)*melt(ii);
+   end
+end
+
+end
