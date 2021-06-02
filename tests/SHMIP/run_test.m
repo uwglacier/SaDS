@@ -1,18 +1,12 @@
 % Baseline driver script
 
-addpath(genpath('../../../functions/'))
-addpath(genpath('../../../model/'))
-addpath(genpath('~/MATLAB Add-Ons/'))
-
-output_path = './outputs/baseline_01.mat';
+set_paths
 
 [params, Y0] = get_baseline_setup;
 
-%% solver
-% run_model(params, Y0, output_path);
+% Use previous simulation to set initial channel sizes
+pickup_output = './outputs/baseline_pickup.mat';
+Y0.Hc = pickup_Hc(pickup_output);
 
-%% pickup
-Y0.Hc = pickup_Hc(output_path);
-pickup_output = './outputs/baseline_02_xis.mat';
-
-run_model(params, Y0, pickup_output);
+model_output = './outputs/baseline.mat';
+run_model(params, Y0, model_output);

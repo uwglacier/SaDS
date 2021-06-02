@@ -20,41 +20,30 @@ params.overwrite = true;
 
 %% Setup
 % Time-stepping
-t = 110*86400;
-% tend = t + 2*3600;
-tend = 256*86400;
+t = 150*86400;      % Partway through melt season
+tend = 155*86400;   % Run for five days
 dt = 180;
-tt = t:(86400/8):tend;
+tt = t:(2*3600):tend;
 params.tt = tt;
-
-% params.stats = true;
-params.overwrite = true;
-
-params.solver = 'odeRK';
 params.solver_opts.dt = dt;
 
 %% Parameters and constants
 params.exchange = 'ratio';
 params.exchange_ratio = 0.2;
-params.channel_model = 'nonlinear';
 
 params.Hmin = 0.1;
 
-params.width = 'ratio';
-params.r = 3;   % NEW on 6 April 2021
-params.lc = 0;
+params.r = 3;   % Channel width-to-depth ratio
 
-% Turbulent flow parameterization - much better!
-params.alphac = 5/3;
-params.betac = 3/2;
+% Sheet and channel conductivities
 params.kc = 10;
-
 params.ks = 1;
 
 % Moulins
 ii_moulin = load('data/randperm_optimized_moulins_baseline_02.txt');
 params.moulins(ii_moulin) = 1;
 
+% This controls what fields are saved in the output file
 params.output_fields = {'m_moulin', 'qc', 'qx_sheet', 'qy_sheet', 'dHcdt', 'dphic_ds', 'dhcdt', 'exchange_frac'};
 
 %% Geometry
@@ -73,13 +62,7 @@ params.fc = @(t) zeros(dmesh.tri.n_edges, 1);
 %% Initial conditions
 hc0 = 0.0*ones(dmesh.tri.n_edges,1);
 hs0 = 0.0*ones(dmesh.tri.n_elements,1);
-
-% Calculate Hc0
-steady = load('outputs/spinup_baseline.mat');
-qc = abs(steady.outputs.qc(:, end));
-Hc0 = (qc./(params.kc*params.r.*abs(steady.outputs.dphic_ds(:, end).^(params.betac-1)))).^(1/(params.alphac+1));
-Hc0(Hc0<0.25) = 0.25;
-
+Hc0 = 0.5*ones(dmesh.tri.n_edges, 1);
 
 Y0.hs = hs0;
 Y0.zs = z_elements;

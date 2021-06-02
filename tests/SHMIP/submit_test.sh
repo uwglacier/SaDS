@@ -1,12 +1,12 @@
 #!/bin/bash -l
-#SBATCH --job-name=baseline
+#SBATCH --job-name=sads-tutorial
 #SBATCH --account=def-c3dow    # adjust this to match the accounting group you are using to submit jobs
-#SBATCH --time=2-00:00         # adjust this to match the walltime of your job
+#SBATCH --time=0-01:00         # adjust this to match the walltime of your job
 #SBATCH --nodes=1      
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1      # adjust this if you are using parallel commands
 #SBATCH --mem=8G               # adjust this according to the memory requirement per node you need
-#SBATCH --output=baseline.log
+#SBATCH --output=tutorial.log
 
 module load StdEnv/2020
 
@@ -14,4 +14,4 @@ module load StdEnv/2020
 module load matlab/2020b
 
 # Remove -singleCompThread below if you are using parallel commands:
-matlab -nodisplay -singleCompThread -r "run_case_baseline; exit"
+matlab -nodisplay -singleCompThread -r "run_test; exit"
