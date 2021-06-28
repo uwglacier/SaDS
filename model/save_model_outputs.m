@@ -1,7 +1,8 @@
 function out_struct = save_model_outputs(filename, params, Y)
 % function save_model_outputs saves model outputs and parameters to a
 % matlab structure for easy analysis later. Args are
-%   * filename: where to save outputs to
+%   * filename: where to save outputs to. The extension specified in
+%   filename controls whether outputs are saved as .mat or .nc file
 %   * params: parameter structure used to run the model
 %   * Y: Outputs straight from the ODE solver plus fields returned by
 %        'derivatives' mode of solver
@@ -78,29 +79,29 @@ out_struct.outputs.tt = out_struct.params.tt;
 
 if ~strcmp('none', filename)
      try
-        [fpath, f2, f3] = fileparts(filename);
+        [fpath, ~, f3] = fileparts(filename);
         % Check if the folder exists
         if ~isfolder(fpath)
             mkdir(fpath)
         end
-
-        if ~isfile(filename) || params.overwrite
-%            if isfile(filename)
-%                delete(filename)
-%                disp(sprintf('Deleted file %s', filename))
-%            end
-%            curdir = pwd;
-%            cd(fpath);
-            save(filename,'-struct','out_struct');
-%            disp('Attemped to save file')
-%            cd(curdir);
+        
+        if strcmp(f3, '.mat')
+            if ~isfile(filename) || params.overwrite
+                save(filename,'-struct','out_struct');
+            else
+                d = datetime;
+                d.Format = '_uuuu-MM-dd_mm_ss';
+                split_name = split(filename, '.');
+                split_name{1} = [split_name{1}, char(d)];
+                new_filename = join(split_name, '.');
+                save(new_filename{1}, '-struct', 'out_struct');
+            end
         else
-            d = datetime;
-            d.Format = '_uuuu-MM-dd_mm_ss';
-            split_name = split(filename, '.');
-            split_name{1} = [split_name{1}, char(d)];
-            new_filename = join(split_name, '.');
-            save(new_filename{1}, '-struct', 'out_struct');
+            if isfile(filename) && params.overwrite
+                delete(filename);
+            end
+            
+            write_nc(filename, 'out_struct');
         end
      catch
          d = datetime;
