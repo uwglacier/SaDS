@@ -423,14 +423,14 @@ dHc_Xi = (params.rhow/params.rhoi)*dhcdt_Xi;
 dHcdt = 0.5*dHcdt_melt + 0.5*dHc_Xi;
 dHc_resid = (params.Hmin - H_c)/params.solver_opts.dt;
 
-if params.enforce_channel_size = false
+if params.regrow_channels = true
     % The good solution:
 
     subset = (H_c + dHcdt*params.solver_opts.dt) < params.Hmin;
     dHcdt(subset) = dHc_resid(subset);
 else
-% Channels can not regrow
-dHcdt(H_c <= params.Hmin) = 0;
+    % Channels can not regrow
+    dHcdt(H_c <= params.Hmin) = 0;
 end
 
 dwcdt = params.r*dHcdt;

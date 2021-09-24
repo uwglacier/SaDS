@@ -71,10 +71,10 @@ params.correct_moulin_phi = false;
 
 params.stop_on_warning = false; % Switch to raise an error if parameter validation fails
 
-% Control behaviour of small channels. If true, sets
-% dHcdt(Hc<=params.Hmin) = 0. If false, allows channels to regrow if
+% Control behaviour of small channels. If false, sets
+% dHcdt(Hc<=params.Hmin) = 0. If true, allows channels to regrow if
 % frictional melt outpaces surface lowering
-params.enforce_channel_size  = true;
+params.regrow_channels = false
 
 % params.exchange: Control the mass exchange between elements and edges.
 % Possible values are {false, 'linear', 'ratio', 'old'}. false does not
