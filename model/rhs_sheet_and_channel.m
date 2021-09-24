@@ -239,8 +239,8 @@ for kk=1:dmesh.tri.n_nodes
     % domain for example. In this case we just use the mean of the
     % potential on any neighbours
     A = dmesh.tri.node_interp_matrices{kk};
-    b = phic(neigh_edges); 
-    
+    b = phic(neigh_edges);
+
 
     if isempty(A)
         phi_node(kk) = mean(b);
@@ -248,7 +248,7 @@ for kk=1:dmesh.tri.n_nodes
         W = diag(dmesh.tri.node_interp_weights{kk});
         x=(W*A)\(W*b);
         phi_node(kk)=x(1);
-        
+
         % TH: 18 May
         if params.moulins(kk)==1 && params.correct_moulin_phi
             bh = h_c(neigh_edges);
@@ -326,7 +326,7 @@ for jj=1:dmesh.tri.n_nodes
             % to set q_edges = 0 so there is no extra heat dissipation
             % Xi_c below) here as this leads to runaway water depth
 %             q_edges(neigh_edges) = 0;
-            
+
             if params.moulins(jj)
                 for ii=1:length(neigh_edges)
                     nn=neigh_edges(ii);
@@ -422,19 +422,16 @@ dHc_Xi = (params.rhow/params.rhoi)*dhcdt_Xi;
 % Total incision is sum of meltout and viscous heat melt of stream base
 dHcdt = 0.5*dHcdt_melt + 0.5*dHc_Xi;
 dHc_resid = (params.Hmin - H_c)/params.solver_opts.dt;
-%     % The good solution:
-%     subset = H_c + dHcdt*params.solver_opts.dt < params.Hmin;
 
-%     subset = (H_c + dHcdt*params.solver_opts.dt < params.Hmin);
-%     dHcdt(subset) = dHc_resid(subset);
+if params.enforce_channel_size = false
+    % The good solution:
 
-%
-%   % HACK follows - channels cannot expand after they've shrunk
-%     subset2 = H_c <= params.Hmin;
-%     dHcdt(subset2) = dHc_resid(subset2);
-
+    subset = (H_c + dHcdt*params.solver_opts.dt) < params.Hmin;
+    dHcdt(subset) = dHc_resid(subset);
+else
 % Channels can not regrow
 dHcdt(H_c <= params.Hmin) = 0;
+end
 
 dwcdt = params.r*dHcdt;
 dzcdt = -params.rhow/params.rhoi*params.mc(t);
