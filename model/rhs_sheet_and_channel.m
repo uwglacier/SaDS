@@ -423,7 +423,7 @@ dHc_Xi = (params.rhow/params.rhoi)*dhcdt_Xi;
 dHcdt = 0.5*dHcdt_melt + 0.5*dHc_Xi;
 dHc_resid = (params.Hmin - H_c)/params.solver_opts.dt;
 
-if params.regrow_channels = true
+if params.regrow_channels == true
     % The good solution:
 
     subset = (H_c + dHcdt*params.solver_opts.dt) < params.Hmin;

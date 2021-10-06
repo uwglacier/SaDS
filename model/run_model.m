@@ -55,6 +55,9 @@ end
 %% Validate the params
 status = validate_params(params);
 
+% Print parameter structure
+params
+
 if params.stop_on_warning && status==0
     error('Parameter validation failed')
 end
