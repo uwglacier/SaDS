@@ -356,7 +356,7 @@ for jj=1:dmesh.tri.n_nodes
 
        dphids_neighs=dphi_ds(neigh_edges);
        dphids_neighs(dmesh.tri.bmark_edge(neigh_edges)~=0)=nan; % Make sure outlet edge is not a boundary edge
-       [max_gradphi,outlet_edge_ii]=nanmax(dphids_neighs.*flowdirs{jj}');
+       [max_gradphi,outlet_edge_ii]=max(dphids_neighs.*flowdirs{jj}');
        outlet_edge=neigh_edges(outlet_edge_ii);
 
        for ii=1:length(neigh_edges)
