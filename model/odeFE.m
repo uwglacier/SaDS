@@ -1,4 +1,4 @@
-function [T,Y] = odeFE(odefun, tspan, dt, v0, opts)
+function [T,Y] = odeFE(odefun, tspan, v0, opts)
 % odeFE provides simple forward Euler timestepping.
 %
 % odeFE is aa simple Euler timestepping scheme built to use the same
@@ -19,6 +19,8 @@ function [T,Y] = odeFE(odefun, tspan, dt, v0, opts)
 if ~isfield(opts, 'stats')
     opts.stats = ones(size(v0));
 end
+
+dt = opts.dt;
 
 % Intialize OutputFcn (for consistency with built-in Matlab solvers, see
 % https://www.mathworks.com/help/matlab/ref/odeset.html)
